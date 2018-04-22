@@ -8,3 +8,5 @@ ADD Gemfile.lock /courses-ms/Gemfile.lock
 
 RUN bundle install
 ADD . /courses-ms
+
+EXPOSE 4001
