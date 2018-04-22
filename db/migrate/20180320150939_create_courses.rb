@@ -10,3 +10,4 @@ class CreateCourses < ActiveRecord::Migration[5.1]
     end
   end
 end
+

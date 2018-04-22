@@ -1,0 +1,196 @@
+#Test with: http://editor.swagger.io/
+
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Microservice for Curses
+  description: Ruby + MySQL
+  license:
+    name: Software Architecture 2018-I
+host: 192.168.99.101:4000
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /curses:
+    post:
+      summary: Creates a new curse
+      operationId: createcurse
+      parameters:
+        - name: curse
+          in: body
+          required: true
+          description: Curse Object
+          schema:
+            $ref: '#/definitions/CurseInput'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    get:
+      summary: Returns all curses
+      operationId: getAllCurses
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/CursesList'
+        '406':
+          description: Not Acceptable (Invalid Params)
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /curses/{id}:
+    get:
+      summary: Returns a curse with the given id
+      operationId: getCurseById
+      parameters:
+        - name: id
+          in: path
+          description: The id of the curse to be returned
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Curse'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    put:
+      summary: Updates a curse with the given id
+      operationId: updateCurse
+      parameters:
+        - name: id
+          in: path
+          description: The id of the curse to be updated
+          required: true
+          type: integer
+        - name: curse
+          in: body
+          required: true
+          description: Curse Object
+          schema:
+            $ref: '#/definitions/CurseInput'
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    delete:
+      summary: Deletes a curse with the given id
+      operationId: deleteCurse
+      parameters:
+        - name: id
+          in: path
+          description: The id of the curse to be deleted
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+definitions:
+
+  # Curses
+  Curse:
+    type: object
+    properties:
+      id:
+        type: integer
+      code:
+        type: integer
+      name:
+        type: string
+      credits:
+        type: integer
+      teacher:
+        type: string
+
+  CurseInput:
+    type: object
+    properties:
+      code:
+        type: integer
+      name:
+        type: string
+      credits:
+        type: integer
+      teacher:
+        type: string
+
+  CursesList:
+    type: object
+    required:
+      - total
+      - list
+    properties:
+      total:
+        type: number
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/Curse'
+
+# Errors
+  ErrorModel:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      message:
+        type: string
+      code:
+        type: number
+      description:
+        type: object
